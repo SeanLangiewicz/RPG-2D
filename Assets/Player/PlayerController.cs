@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Animation")]
+    public Animator anim = null;
+
+    [Header("Movement")]
     public float movementSpeed;
     public float velocity;
     public Rigidbody rb;
-    public Animator anim;
+
+
+    [Header("Combat")]
+    bool isAttacking = false;
 
 	// Use this for initialization
 	void Start ()
@@ -25,26 +32,36 @@ public class PlayerController : MonoBehaviour
 
     void GetInput()
     {
+        //Attack
+        if(Input.GetMouseButtonDown(0))
+        {
+            print("attacking");
+            Attack();
+        }
         // Move left
         if (Input.GetKey(KeyCode.A))
         {
             SetVelocity(-1);
+            anim.SetInteger("Condition", 0);
         }
 
         else if (Input.GetKeyUp(KeyCode.A))
         {
             SetVelocity(0);
+            anim.SetInteger("Condition", 0);
         }
 
         //move right
         if (Input.GetKey(KeyCode.D))
         {
             SetVelocity(1);
+            anim.SetInteger("Condition", 0);
         }
 
         else if (Input.GetKeyUp(KeyCode.D))
         {
             SetVelocity(0);
+            anim.SetInteger("Condition", 0);
         }
     }
 
@@ -53,15 +70,20 @@ public class PlayerController : MonoBehaviour
     {
         if(velocity ==0)
         {
-            anim.SetInteger("Condition", 0);
+          
             return;
         }
         else
         {
-            anim.SetInteger("Condition", 1);
+            if (!isAttacking)
+            {
+                anim.SetInteger("Condition", 1);
+                rb.MovePosition(transform.position + (Vector3.right * velocity * movementSpeed * Time.deltaTime));
+            }
         }
-        rb.MovePosition(transform.position + (Vector3.right*velocity * movementSpeed*Time.deltaTime));    
-    }
+     }
+        
+
     void SetVelocity(float dir)
     {
             if (dir < 0)
@@ -70,12 +92,31 @@ public class PlayerController : MonoBehaviour
             
                 }
 
-        else if (dir > 0)
-        {
-            transform.LookAt(transform.position + Vector3.right);
+            else if (dir > 0)
+            {
+                transform.LookAt(transform.position + Vector3.right);
             
-        }
-        velocity = dir;
+            }
+            velocity = dir;
 
+    }
+    void Attack()
+    {
+        if (isAttacking)
+        {
+            return;
+        }
+        else
+        {
+            anim.SetInteger("Condition", 2);
+            StartCoroutine(AttackRoutine());
+        }
+    }
+
+    IEnumerator AttackRoutine()
+    {
+        isAttacking = true;
+        yield return new WaitForSeconds(1);
+        isAttacking = false;
     }
 }
