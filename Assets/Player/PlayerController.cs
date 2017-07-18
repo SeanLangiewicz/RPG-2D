@@ -67,13 +67,15 @@ public class PlayerController : MonoBehaviour
             if (dir < 0)
                 {
             transform.LookAt(transform.position + Vector3.left);
+            
                 }
 
         else if (dir > 0)
         {
             transform.LookAt(transform.position + Vector3.right);
-                velocity = dir;
+            
         }
-        
+        velocity = dir;
+
     }
 }
