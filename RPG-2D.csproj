@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\MedievalTownExteriors\Scripts\ProtectCameraFromWallClip.cs" />
-    <Compile Include="Assets\PlayerController.cs" />
+    <Compile Include="Assets\Player\PlayerController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Baker House\Readme.txt" />
