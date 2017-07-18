@@ -90,6 +90,7 @@
   <ItemGroup>
     <None Include="Assets\Baker House\Readme.txt" />
     <None Include="Assets\Cartoon lowpoly water well\readme.txt" />
+    <None Include="Assets\Chibi Mummy\readme.txt" />
     <None Include="Assets\MedievalTownExteriors\Readme.txt" />
     <None Include="Assets\Plugins\Pixelplacement\iTween\ReadMe!\ReadMe!.txt" />
   </ItemGroup>
