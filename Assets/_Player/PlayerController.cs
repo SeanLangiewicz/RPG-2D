@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,15 @@ public class PlayerController : MonoBehaviour
 
 
     [Header("Combat")]
-    bool isAttacking = false;
+    private List<Transform> enemiesInRange = new List<Transform>();
+    private bool canMove = true;
+    private bool canAttack = true;
+    private bool isAttacking = false;
+
+    public float attackDamage;
+    public float attackSpeed;
+    public float attackRange;
+
 
 	// Use this for initialization
 	void Start ()
@@ -65,8 +74,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-   
-        void Move()
+    #region MOVEMENT
+    void Move()
     {
         if(velocity ==0)
         {
@@ -75,14 +84,15 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (!isAttacking)
+            if (canAttack)
             {
                 anim.SetInteger("Condition", 1);
                 rb.MovePosition(transform.position + (Vector3.right * velocity * movementSpeed * Time.deltaTime));
             }
         }
      }
-        
+
+   
 
     void SetVelocity(float dir)
     {
@@ -100,9 +110,12 @@ public class PlayerController : MonoBehaviour
             velocity = dir;
 
     }
+    #endregion
+
+    #region COMBAT
     void Attack()
     {
-        if (isAttacking)
+        if (!canAttack)
         {
             return;
         }
@@ -110,15 +123,45 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetInteger("Condition", 2);
             StartCoroutine(AttackRoutine());
+            StartCoroutine(AttackCooldown());
         }
+    }
+
+    private IEnumerator AttackCooldown()
+    {
+        canAttack = false;
+        yield return new WaitForSeconds(1 / attackSpeed);
+        canAttack = true;
     }
 
     IEnumerator AttackRoutine()
     {
-        isAttacking = true;
-        yield return new WaitForSeconds(0.5f);
+        canMove = false;
+        canAttack = false;
+        yield return new WaitForSeconds(0.1f);
         anim.SetInteger("Condition", 0);
-        yield return new WaitForSeconds(1); ;
-        isAttacking = false;
+        GetEnemiesInRange();
+        foreach(Transform enemy in enemiesInRange)
+        {
+            EnemyController ec = enemy.GetComponent<EnemyController>();
+            if (ec == null) continue;
+            ec.GetHit(attackDamage);
+        }
+
+        yield return new WaitForSeconds(.065f); ;
+        canMove = true;
+    }
+    #endregion
+
+    void GetEnemiesInRange()
+    {
+        foreach(Collider c in Physics.OverlapSphere((transform.position + transform.forward * 0.5f),0.5f))
+            {
+                if(c.gameObject.CompareTag("Enemy"))
+                {
+                    enemiesInRange.Add(c.transform);
+                }
+            }
     }
 }
+

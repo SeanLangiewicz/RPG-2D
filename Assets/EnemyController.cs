@@ -13,8 +13,10 @@ public class EnemyController : MonoBehaviour
     public float moveSpeed;
 
 	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+    {
+        currentHealth = totalHealth;
+
 	}
 	
 	// Update is called once per frame
@@ -22,14 +24,16 @@ public class EnemyController : MonoBehaviour
     {
 		if(Input.GetMouseButtonDown(0))
         {
-            GetHit();
+            
         }
 	}
 
-    public void GetHit()
+    public void GetHit(float damage)
     {
         anim.SetInteger("Condition", 2);
+        currentHealth -= damage;
         StartCoroutine(RecoverFromHit());
+        print(currentHealth);
     }
     IEnumerator RecoverFromHit()
     {
